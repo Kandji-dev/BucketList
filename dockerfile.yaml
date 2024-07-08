@@ -1,0 +1,24 @@
+# Utiliser une image Ruby avec Bundler préinstallé
+FROM ruby:2.6
+
+# Installer les dépendances nécessaires
+RUN apt-get update -qq && \
+    apt-get install -y build-essential libxml2-dev libxslt1-dev nodejs
+
+# Définir le répertoire de travail dans le conteneur
+WORKDIR /app
+
+# Copier le Gemfile et le Gemfile.lock pour installer les gemmes
+COPY Gemfile Gemfile.lock ./
+
+# Installer les gemmes avec Bundler
+RUN gem install bundler && bundle install
+
+# Copier le reste des fichiers de l'application
+COPY . .
+
+# Exposer le port 3000 pour l'application Rails
+EXPOSE 3000
+
+# Commande par défaut pour démarrer l'application Rails
+CMD ["rails", "server", "-b", "0.0.0.0"]
